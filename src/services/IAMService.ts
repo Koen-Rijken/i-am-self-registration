@@ -61,17 +61,6 @@ export interface VerifySessionResponse {
 
 export class IAMService {
   private readonly baseUrl: string = "https://dev-backend.i-am.technology";
-  private readonly access: {
-    name: string;
-    secret: string;
-  } = {
-    name: "tester",
-    secret: "DigitalIam2025!",
-  };
-
-  private readonly authHeader = `Basic ${
-    btoa(`${this.access.name}:${this.access.secret}`)
-  }`;
 
   /**
    * Signs data with a private key
@@ -150,28 +139,32 @@ export class IAMService {
       signature,
     };
 
-    // Make the API request to generate QR code
-    const response = await fetch(
-      `${this.baseUrl}/iam-auth/api/v1/auth/generate-auth-qr`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": this.authHeader,
+    try {
+      // Make the API request to generate QR code
+      const response = await fetch(
+        `${this.baseUrl}/iam-auth/api/v1/auth/generate-auth-qr`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
         },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        `Failed to generate QR code: ${JSON.stringify(errorData)}`,
       );
-    }
 
-    const data = await response.json();
-    return data as AuthGenerateAuthQRResponse;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Failed to generate QR code: ${JSON.stringify(errorData)}`,
+        );
+      }
+
+      const data = await response.json();
+      return data as AuthGenerateAuthQRResponse;
+    } catch (error) {
+      console.error('QR code generation failed:', error);
+      throw error;
+    }
   }
 
   async checkVerification(options: {
@@ -185,20 +178,29 @@ export class IAMService {
       timeoutInMs: options.timeoutInMs,
     };
 
-    const response = await fetch(
-      `${this.baseUrl}/iam-auth/api/v1/auth/check-verification`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": this.authHeader,
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/iam-auth/api/v1/auth/check-verification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
         },
-        body: JSON.stringify(requestBody),
-      },
-    );
+      );
 
-    const data = await response.json();
-    return data as CheckVerificationResponse;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Verification check failed: ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      return data as CheckVerificationResponse;
+    } catch (error) {
+      console.error('Verification check failed:', error);
+      throw error;
+    }
   }
 
   async verifySession(options: {
@@ -212,19 +214,28 @@ export class IAMService {
       applicationId: options.applicationId,
     };
 
-    const response = await fetch(
-      `${this.baseUrl}/iam-auth/api/v1/hub/verify-session`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": this.authHeader,
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/iam-auth/api/v1/hub/verify-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
         },
-        body: JSON.stringify(requestBody),
-      },
-    );
+      );
 
-    const data = await response.json();
-    return data as VerifySessionResponse;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Session verification failed: ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      return data as VerifySessionResponse;
+    } catch (error) {
+      console.error('Session verification failed:', error);
+      throw error;
+    }
   }
 }
