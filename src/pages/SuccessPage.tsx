@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const SuccessPage: React.FC = () => {
-  const { isAuthenticated, userEmail, username, logout } = useAuth();
+  const { isAuthenticated, userEmail, logout } = useAuth();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -58,12 +58,6 @@ const SuccessPage: React.FC = () => {
           >
             <h2 className="font-semibold text-lg text-gray-700 mb-4">Your Account Information</h2>
             <div className="flex flex-col space-y-3">
-              {username && (
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Name:</span>
-                  <span className="font-medium">{username}</span>
-                </div>
-              )}
               {userEmail && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">Email:</span>
@@ -73,7 +67,7 @@ const SuccessPage: React.FC = () => {
               <div className="flex justify-between">
                 <span className="text-gray-500">Login method:</span>
                 <span className="font-medium">
-                  {username ? 'Registration' : 'QR Code Authentication'}
+                  {userEmail ? 'Registration' : 'QR Code Authentication'}
                 </span>
               </div>
             </div>
