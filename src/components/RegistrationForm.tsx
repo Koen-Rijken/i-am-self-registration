@@ -1,26 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { CheckCircle, User, Mail } from 'lucide-react';
+import { CheckCircle, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const RegistrationForm: React.FC = () => {
   const { registerUser } = useAuth();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     let isValid = true;
-    
-    // Validate name
-    if (!name.trim()) {
-      setNameError('Name is required');
-      isValid = false;
-    } else {
-      setNameError('');
-    }
     
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,9 +33,8 @@ const RegistrationForm: React.FC = () => {
     if (validateForm()) {
       setIsSubmitting(true);
       
-      // Simulate API call with a timeout
       setTimeout(() => {
-        registerUser(name, email);
+        registerUser(email);
         setIsSubmitting(false);
       }, 1000);
     }
@@ -56,26 +45,6 @@ const RegistrationForm: React.FC = () => {
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Request Access</h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User size={18} className="text-gray-400" />
-            </div>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={`block w-full pl-10 pr-3 py-2 border ${nameError ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-              placeholder="John Doe"
-            />
-          </div>
-          {nameError && <p className="mt-1 text-sm text-red-600">{nameError}</p>}
-        </div>
-        
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
             Email Address

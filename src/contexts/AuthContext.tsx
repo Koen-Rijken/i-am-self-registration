@@ -10,8 +10,7 @@ interface AuthContextType {
   isVerifying: boolean;
   startAuthentication: () => Promise<void>;
   logout: () => void;
-  registerUser: (name: string, email: string) => void;
-  username: string | null;
+  registerUser: (email: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -24,7 +23,6 @@ const PRIVATE_KEY = 'MCwCAQAwBQYDK2VwBCCzMloUy/5H0ufRNLBjEaYBHLKpRQr/aO6ZWp9Lv5H
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +98,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setIsAuthenticated(false);
     setUserEmail(null);
-    setUsername(null);
     setQrCodeData(null);
     setError(null);
     setTransactionId(null);
@@ -108,8 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     clearVerificationInterval();
   };
 
-  const registerUser = (name: string, email: string) => {
-    setUsername(name);
+  const registerUser = (email: string) => {
     setUserEmail(email);
     // In a real app, you would send this data to a backend
     // For demo purposes, we'll just set the user as authenticated
@@ -120,7 +116,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider value={{
       isAuthenticated,
       userEmail,
-      username,
       error,
       qrCodeData,
       isLoading,
